@@ -43,6 +43,7 @@ typedef struct uart_pty_port_t {
 	uart_pty_fifo_t out;
 	uint8_t		buffer[512];
 	size_t		buffer_len, buffer_done;
+    int         slaveDesc;            // socket we chat on
 } uart_pty_port_t, *uart_pty_port_p;
 
 typedef struct uart_pty_t {

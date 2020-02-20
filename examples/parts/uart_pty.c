@@ -262,6 +262,7 @@ uart_pty_init(
 		p->port[ti].s = m;
 		p->port[ti].tap = ti != 0;
 		p->port[ti].crlf = ti != 0;
+        p->port[ti].slaveDesc = s;
 		printf("uart_pty_init %s on port *** %s ***\n",
 				ti == 0 ? "bridge" : "tap", p->port[ti].slavename);
 	}
@@ -277,8 +278,10 @@ uart_pty_stop(
 	puts(__func__);
 	pthread_kill(p->thread, SIGINT);
 	for (int ti = 0; ti < 2; ti++)
-		if (p->port[ti].s)
-			close(p->port[ti].s);
+        if (p->port[ti].s) {
+            close(p->port[ti].s);
+            close(p->port[ti].slaveDesc);
+        }
 	void * ret;
 	pthread_join(p->thread, &ret);
 }
