@@ -29,8 +29,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <libelf.h>
-#include <gelf.h>
+#include "libelf.h"
+#include "gelf.h"
 
 #include "sim_elf.h"
 #include "sim_vcd_file.h"
