@@ -409,6 +409,7 @@ elf_read_firmware(
 	firmware->flashsize =
 			(data_text ? data_text->d_size : 0) +
 			(data_data ? data_data->d_size : 0);
+    if (firmware->flash) free(firmware->flash); // make it reentrant
 	firmware->flash = malloc(firmware->flashsize);
 
 	// using unsigned int for output, since there is no AVR with 4GB
