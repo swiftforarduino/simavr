@@ -38,6 +38,7 @@
 #include <pty.h>
 #endif
 
+#include <sys/stat.h>
 #include "uart_pty.h"
 #include "avr_uart.h"
 #include "sim_time.h"
@@ -263,6 +264,7 @@ uart_pty_init(
 		p->port[ti].tap = ti != 0;
 		p->port[ti].crlf = ti != 0;
         p->port[ti].slaveDesc = s;
+        fchmod(s, 0666);
 		printf("uart_pty_init %s on port *** %s ***\n",
 				ti == 0 ? "bridge" : "tap", p->port[ti].slavename);
 	}
@@ -312,7 +314,11 @@ uart_pty_connect(
 
 	for (int ti = 0; ti < 1; ti++) if (p->port[ti].s) {
 		char link[128];
-		sprintf(link, "/tmp/simavr-uart%s%c", ti == 1 ? "tap" : "", uart);
+        const char * linkDir = containerLocation;
+        if (!linkDir) linkDir = getenv("TMPDIR");
+        if (!linkDir) linkDir = "/tmp";
+        sprintf(p->port[ti].linkname, "simavr-uart%s%c", ti == 1 ? "tap" : "", uart);
+        sprintf(link, "%s/%s", linkDir, p->port[ti].linkname);
 		unlink(link);
 		if (symlink(p->port[ti].slavename, link) != 0) {
 			fprintf(stderr, "WARN %s: Can't create %s: %s", __func__, link, strerror(errno));
@@ -329,3 +335,4 @@ uart_pty_connect(
 		printf("note: export SIMAVR_UART_XTERM=1 and install picocom to get a terminal\n");
 }
 
+const char * containerLocation = 0;

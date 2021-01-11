@@ -44,6 +44,7 @@ typedef struct uart_pty_port_t {
 	uint8_t		buffer[512];
 	size_t		buffer_len, buffer_done;
     int         slaveDesc;            // socket we chat on
+    char        linkname[64]; // the symbolic link to the slave tty device
 } uart_pty_port_t, *uart_pty_port_p;
 
 typedef struct uart_pty_t {
@@ -73,5 +74,7 @@ void
 uart_pty_connect(
 		uart_pty_t * p,
 		char uart);
+
+extern const char * containerLocation;
 
 #endif /* __UART_PTY_H___ */
