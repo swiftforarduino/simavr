@@ -313,17 +313,17 @@ uart_pty_connect(
 		avr_irq_register_notify(xoff, uart_pty_xoff_hook, p);
 
 	for (int ti = 0; ti < 1; ti++) if (p->port[ti].s) {
-		char link[128];
+//		char link[128];
         const char * linkDir = containerLocation;
         if (!linkDir) linkDir = getenv("TMPDIR");
         if (!linkDir) linkDir = "/tmp";
         sprintf(p->port[ti].linkname, "simavr-uart%s%c", ti == 1 ? "tap" : "", uart);
-        sprintf(link, "%s/%s", linkDir, p->port[ti].linkname);
-		unlink(link);
-		if (symlink(p->port[ti].slavename, link) != 0) {
-			fprintf(stderr, "WARN %s: Can't create %s: %s", __func__, link, strerror(errno));
+        sprintf(p->port[ti].linkfullfilename, "%s/%s", linkDir, p->port[ti].linkname);
+		unlink(p->port[ti].linkfullfilename);
+		if (symlink(p->port[ti].slavename, p->port[ti].linkfullfilename) != 0) {
+			fprintf(stderr, "WARN %s: Can't create %s: %s", __func__, p->port[ti].linkfullfilename, strerror(errno));
 		} else {
-			printf("%s: %s now points to %s\n", __func__, link, p->port[ti].slavename);
+			printf("%s: %s now points to %s\n", __func__, p->port[ti].linkfullfilename, p->port[ti].slavename);
 		}
 	}
 	if (getenv("SIMAVR_UART_XTERM") && atoi(getenv("SIMAVR_UART_XTERM"))) {
